@@ -1,0 +1,68 @@
+{
+  "name": "flywheel-language",
+  "displayName": "Flywheel",
+  "icon": "icon.png",
+  "description": "Syntax highlighting, snippets, and editing support for the Flywheel language.",
+  "version": "0.1.0",
+  "publisher": "fwlang",
+  "private": true,
+  "license": "UNLICENSED",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "keywords": [
+    "flywheel",
+    "fw",
+    "fly",
+    "markup"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fwlang/flywheel.git",
+    "directory": "fw-vscode"
+  },
+  "contributes": {
+    "languages": [
+      {
+        "id": "flywheel",
+        "aliases": [
+          "Flywheel",
+          "flywheel"
+        ],
+        "extensions": [
+          ".fw",
+          ".fly"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "flywheel",
+        "scopeName": "source.flywheel",
+        "path": "./syntaxes/flywheel.tmLanguage.json",
+        "embeddedLanguages": {
+          "meta.embedded.expression.flywheel": "flywheel"
+        }
+      }
+    ],
+    "snippets": [
+      {
+        "language": "flywheel",
+        "path": "./snippets/flywheel.json"
+      }
+    ]
+  },
+  "scripts": {
+    "test": "node --test test/*.test.cjs",
+    "package": "vsce package --out flywheel-language.vsix"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "4.0.0",
+    "vscode-oniguruma": "2.0.1",
+    "vscode-textmate": "9.3.2"
+  }
+}

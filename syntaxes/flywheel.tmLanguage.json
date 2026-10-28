@@ -1,0 +1,588 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Flywheel",
+  "scopeName": "source.flywheel",
+  "patterns": [
+    {
+      "include": "#expression"
+    }
+  ],
+  "repository": {
+    "expression": {
+      "patterns": [
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#strings"
+        },
+        {
+          "include": "#declarations"
+        },
+        {
+          "include": "#imports"
+        },
+        {
+          "include": "#generic-types"
+        },
+        {
+          "include": "#keywords"
+        },
+        {
+          "include": "#types"
+        },
+        {
+          "include": "#constants"
+        },
+        {
+          "include": "#numbers"
+        },
+        {
+          "include": "#markup"
+        },
+        {
+          "include": "#builtins"
+        },
+        {
+          "include": "#calls"
+        },
+        {
+          "include": "#braces"
+        },
+        {
+          "include": "#parens"
+        },
+        {
+          "include": "#brackets"
+        },
+        {
+          "include": "#operators"
+        },
+        {
+          "include": "#identifiers"
+        }
+      ]
+    },
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.number-sign.flywheel",
+          "begin": "#",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.flywheel"
+            }
+          },
+          "end": "$"
+        }
+      ]
+    },
+    "strings": {
+      "name": "string.quoted.double.flywheel",
+      "begin": "\"",
+      "end": "\"",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.begin.flywheel"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.string.end.flywheel"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#escapes"
+        },
+        {
+          "include": "#literal-braces"
+        },
+        {
+          "include": "#interpolation"
+        }
+      ]
+    },
+    "escapes": {
+      "patterns": [
+        {
+          "match": "\\\\(?:[\\\\\"nrt]|u\\{[0-9a-fA-F]+\\})",
+          "name": "constant.character.escape.flywheel"
+        },
+        {
+          "match": "\\\\.",
+          "name": "invalid.illegal.escape.flywheel"
+        }
+      ]
+    },
+    "literal-braces": {
+      "match": "\\{\\{|\\}\\}",
+      "name": "constant.character.escape.brace.flywheel"
+    },
+    "interpolation": {
+      "name": "meta.interpolation.flywheel",
+      "contentName": "meta.embedded.expression.flywheel",
+      "begin": "\\{",
+      "end": "\\}",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.section.interpolation.begin.flywheel"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.interpolation.end.flywheel"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#expression"
+        }
+      ]
+    },
+    "declarations": {
+      "patterns": [
+        {
+          "match": "\\b(function)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+          "captures": {
+            "1": {
+              "name": "storage.type.function.flywheel"
+            },
+            "2": {
+              "name": "entity.name.function.flywheel"
+            }
+          }
+        },
+        {
+          "match": "\\b(class)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+          "captures": {
+            "1": {
+              "name": "storage.type.class.flywheel"
+            },
+            "2": {
+              "name": "entity.name.type.class.flywheel"
+            }
+          }
+        },
+        {
+          "match": "\\b(component)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+          "captures": {
+            "1": {
+              "name": "storage.type.component.flywheel"
+            },
+            "2": {
+              "name": "entity.name.type.component.flywheel"
+            }
+          }
+        }
+      ]
+    },
+    "imports": {
+      "name": "meta.import.flywheel",
+      "begin": "\\bimport\\b",
+      "beginCaptures": {
+        "0": {
+          "name": "keyword.control.import.flywheel"
+        }
+      },
+      "end": "(?=;|#|$)",
+      "patterns": [
+        {
+          "match": "\\bas\\b",
+          "name": "keyword.control.import.flywheel"
+        },
+        {
+          "match": "\\*",
+          "name": "keyword.operator.wildcard.flywheel"
+        },
+        {
+          "match": "\\.",
+          "name": "punctuation.accessor.flywheel"
+        },
+        {
+          "match": "[A-Za-z_][A-Za-z0-9_]*",
+          "name": "entity.name.namespace.flywheel"
+        }
+      ]
+    },
+    "generic-types": {
+      "name": "meta.type.parameters.flywheel",
+      "begin": "\\b(array|tuple|map|Result|weak)\\s*(<)",
+      "beginCaptures": {
+        "1": {
+          "name": "support.type.flywheel"
+        },
+        "2": {
+          "name": "punctuation.definition.typeparameters.begin.flywheel"
+        }
+      },
+      "end": ">",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.typeparameters.end.flywheel"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#generic-types"
+        },
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#types"
+        },
+        {
+          "match": "[A-Za-z_][A-Za-z0-9_]*",
+          "name": "entity.name.type.flywheel"
+        },
+        {
+          "match": "[\\[\\],?.]",
+          "name": "punctuation.separator.type.flywheel"
+        }
+      ]
+    },
+    "types": {
+      "match": "\\b(?:bool|i8|i16|i32|i64|u8|u16|u32|u64|int|float|double|string|void|element|fragment|char|array|tuple|map|Result|weak|Error|RuntimeError|FileError|InputError|ProcessError|IndexError|KeyError|NumericError|AssertionError|JsonError|ResultError|CastError|SelectorError)\\b",
+      "name": "support.type.flywheel"
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "match": "\\b(?:if|then|else|while|do|for|in|end|break|continue|return|try|catch|finally|throw)\\b",
+          "name": "keyword.control.flywheel"
+        },
+        {
+          "match": "\\b(?:and|or|not)\\b",
+          "name": "keyword.operator.logical.flywheel"
+        },
+        {
+          "match": "\\b(?:public|private)\\b",
+          "name": "storage.modifier.flywheel"
+        },
+        {
+          "match": "\\b(?:var|const|returns|function|class|component)\\b",
+          "name": "storage.type.flywheel"
+        },
+        {
+          "match": "\\b(?:inst|attr)\\b",
+          "name": "variable.language.flywheel"
+        }
+      ]
+    },
+    "constants": {
+      "match": "\\b(?:true|false|null)\\b",
+      "name": "constant.language.flywheel"
+    },
+    "numbers": {
+      "match": "(?<!\\w)(?:[0-9]+\\.[0-9]+(?:[eE][+-]?[0-9]+)?|[0-9]+[eE][+-]?[0-9]+|[0-9]+)\\b",
+      "name": "constant.numeric.flywheel"
+    },
+    "builtins": {
+      "match": "\\b(?:print|input|len|typeof|render)\\b",
+      "name": "support.function.builtin.flywheel"
+    },
+    "calls": {
+      "patterns": [
+        {
+          "match": "\\b[A-Za-z_][A-Za-z0-9_]*(?=\\s*\\()",
+          "name": "entity.name.function.call.flywheel"
+        },
+        {
+          "match": "(\\.)([A-Za-z_][A-Za-z0-9_]*)(?=\\s+[^\\s=+*/%<>!])",
+          "captures": {
+            "1": {
+              "name": "punctuation.accessor.flywheel"
+            },
+            "2": {
+              "name": "entity.name.function.call.flywheel"
+            }
+          }
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "match": "\\.\\.<|\\.\\.",
+          "name": "keyword.operator.range.flywheel"
+        },
+        {
+          "match": "==|!=|<=|>=|[<>]",
+          "name": "keyword.operator.comparison.flywheel"
+        },
+        {
+          "match": "[+*/%\\-]=|=",
+          "name": "keyword.operator.assignment.flywheel"
+        },
+        {
+          "match": "//|[+*/%\\-]",
+          "name": "keyword.operator.arithmetic.flywheel"
+        },
+        {
+          "match": "[?,:;]",
+          "name": "punctuation.separator.flywheel"
+        },
+        {
+          "match": "\\.",
+          "name": "punctuation.accessor.flywheel"
+        }
+      ]
+    },
+    "identifiers": {
+      "match": "[A-Za-z_][A-Za-z0-9_]*",
+      "name": "variable.other.readwrite.flywheel"
+    },
+    "entities": {
+      "match": "&(?:amp|lt|gt|quot|apos|#[0-9]+|#x[0-9a-fA-F]+);",
+      "name": "constant.character.entity.flywheel"
+    },
+    "markup": {
+      "patterns": [
+        {
+          "include": "#fragment"
+        },
+        {
+          "include": "#element"
+        },
+        {
+          "include": "#multiline-element"
+        }
+      ]
+    },
+    "fragment": {
+      "name": "meta.fragment.flywheel",
+      "begin": "(<)(>)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.begin.flywheel"
+        },
+        "2": {
+          "name": "punctuation.definition.tag.end.flywheel"
+        }
+      },
+      "end": "(</)(>)",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.begin.flywheel"
+        },
+        "2": {
+          "name": "punctuation.definition.tag.end.flywheel"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#markup-content"
+        }
+      ]
+    },
+    "element": {
+      "name": "meta.element.flywheel",
+      "begin": "(?=<([A-Za-z_][A-Za-z0-9_.:-]*)(?:\\s*/?>|\\s+[A-Za-z_][A-Za-z0-9_.:-]*\\s*=))",
+      "end": "(/>)|(</)(\\1)(\\s*)(>)",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.flywheel"
+        },
+        "2": {
+          "name": "punctuation.definition.tag.begin.flywheel"
+        },
+        "3": {
+          "name": "entity.name.tag.flywheel"
+        },
+        "5": {
+          "name": "punctuation.definition.tag.end.flywheel"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#tag-header"
+        },
+        {
+          "include": "#element-content"
+        }
+      ]
+    },
+    "markup-content": {
+      "patterns": [
+        {
+          "include": "#fragment"
+        },
+        {
+          "include": "#nested-element"
+        },
+        {
+          "include": "#literal-braces"
+        },
+        {
+          "include": "#interpolation"
+        },
+        {
+          "include": "#entities"
+        },
+        {
+          "match": "[^<{}&]+",
+          "name": "string.unquoted.markup.flywheel"
+        }
+      ]
+    },
+    "braces": {
+      "name": "meta.group.braces.flywheel",
+      "begin": "\\{",
+      "end": "\\}",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.section.group.begin.flywheel"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.group.end.flywheel"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#expression"
+        }
+      ]
+    },
+    "parens": {
+      "name": "meta.group.parens.flywheel",
+      "begin": "\\(",
+      "end": "\\)",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.section.group.begin.flywheel"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.group.end.flywheel"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#expression"
+        }
+      ]
+    },
+    "brackets": {
+      "name": "meta.group.brackets.flywheel",
+      "begin": "\\[",
+      "end": "\\]",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.section.group.begin.flywheel"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.group.end.flywheel"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#expression"
+        }
+      ]
+    },
+    "multiline-element": {
+      "name": "meta.element.flywheel",
+      "begin": "(?:^\\s*|(?<=[=(:,\\[\\{])\\s*|(?<=\\breturn)\\s+|(?<=\\bprint)\\s+)(?=<([A-Za-z_][A-Za-z0-9_.:-]*)\\s*$)",
+      "end": "(/>)|(</)(\\1)(\\s*)(>)",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.flywheel"
+        },
+        "2": {
+          "name": "punctuation.definition.tag.begin.flywheel"
+        },
+        "3": {
+          "name": "entity.name.tag.flywheel"
+        },
+        "5": {
+          "name": "punctuation.definition.tag.end.flywheel"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#tag-header"
+        },
+        {
+          "include": "#element-content"
+        }
+      ]
+    },
+    "nested-element": {
+      "name": "meta.element.flywheel",
+      "begin": "(?=<([A-Za-z_][A-Za-z0-9_.:-]*)(?:\\s*/?>|\\s+[A-Za-z_][A-Za-z0-9_.:-]*\\s*=|\\s*$))",
+      "end": "(/>)|(</)(\\1)(\\s*)(>)",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.end.flywheel"
+        },
+        "2": {
+          "name": "punctuation.definition.tag.begin.flywheel"
+        },
+        "3": {
+          "name": "entity.name.tag.flywheel"
+        },
+        "5": {
+          "name": "punctuation.definition.tag.end.flywheel"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#tag-header"
+        },
+        {
+          "include": "#element-content"
+        }
+      ]
+    },
+    "tag-header": {
+      "name": "meta.tag.flywheel",
+      "begin": "(<)([A-Za-z_][A-Za-z0-9_.:-]*)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.begin.flywheel"
+        },
+        "2": {
+          "name": "entity.name.tag.flywheel"
+        }
+      },
+      "end": "(?=/?>)",
+      "patterns": [
+        {
+          "include": "#strings"
+        },
+        {
+          "include": "#interpolation"
+        },
+        {
+          "match": "[A-Za-z_][A-Za-z0-9_.:-]*(?=\\s*=)",
+          "name": "entity.other.attribute-name.flywheel"
+        },
+        {
+          "match": "=",
+          "name": "punctuation.separator.key-value.flywheel"
+        }
+      ]
+    },
+    "element-content": {
+      "name": "meta.markup.content.flywheel",
+      "begin": ">",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.tag.end.flywheel"
+        }
+      },
+      "end": "(?=</)",
+      "patterns": [
+        {
+          "include": "#markup-content"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "Function": {
+    "prefix": [
+      "fn",
+      "function"
+    ],
+    "body": [
+      "function ${1:name}(${2:int value}) returns ${3:int}",
+      "    $0",
+      "end"
+    ],
+    "description": "Declare a function with typed parameters"
+  },
+  "Zero-argument function": {
+    "prefix": "fn0",
+    "body": [
+      "function ${1:main} returns ${2:void}",
+      "    $0",
+      "end"
+    ],
+    "description": "Declare a function without parameters"
+  },
+  "If": {
+    "prefix": "if",
+    "body": [
+      "if ${1:condition} then",
+      "    $0",
+      "end"
+    ],
+    "description": "Conditional block"
+  },
+  "If / else": {
+    "prefix": "ifelse",
+    "body": [
+      "if ${1:condition} then",
+      "    $2",
+      "else",
+      "    $0",
+      "end"
+    ],
+    "description": "Conditional with alternative"
+  },
+  "For": {
+    "prefix": "for",
+    "body": [
+      "for ${1:item} in ${2:items} do",
+      "    $0",
+      "end"
+    ],
+    "description": "Iterate a collection"
+  },
+  "While": {
+    "prefix": "while",
+    "body": [
+      "while ${1:condition} do",
+      "    $0",
+      "end"
+    ],
+    "description": "While loop"
+  },
+  "Try / catch": {
+    "prefix": "try",
+    "body": [
+      "try",
+      "    $1",
+      "catch ${2:Error} ${3:error}",
+      "    $0",
+      "end"
+    ],
+    "description": "Handle a typed error"
+  },
+  "Class": {
+    "prefix": "class",
+    "body": [
+      "class ${1:Person}",
+      "    ${2:string} ${3:name}",
+      "    $0",
+      "end"
+    ],
+    "description": "Declare a class"
+  },
+  "Component": {
+    "prefix": "component",
+    "body": [
+      "component ${1:Card} = <${2:div}>",
+      "    {attr inner}",
+      "    $0",
+      "</$2>"
+    ],
+    "description": "Declare a markup component"
+  },
+  "Fragment": {
+    "prefix": "fragment",
+    "body": [
+      "<>",
+      "    $0",
+      "</>"
+    ],
+    "description": "A fragment of markup nodes"
+  }
+}
