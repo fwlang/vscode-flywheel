@@ -188,6 +188,170 @@ test('multiline attribute interpolation and nested markup restore the surroundin
   assert.equal(result.stack.depth, 1);
 });
 
+test('attribute names are never keywords, including valueless, single-quoted, and unquoted forms', () => {
+  const result = tokenize([
+    'var a = <h1 class="title">Hi</h1>',
+    'var b = <input disabled class="x" />',
+    "var c = <p class=big id='n {n}'>x</p>",
+    'if a <b or c == d then',
+    'end',
+  ].join('\n'));
+  has(result, 0, 'class', 'entity.other.attribute-name.flywheel');
+  lacks(result, 0, 'class', 'storage');
+  has(result, 1, 'disabled', 'entity.other.attribute-name.flywheel');
+  has(result, 1, 'class', 'entity.other.attribute-name.flywheel');
+  has(result, 2, 'big', 'string.unquoted.attribute-value.flywheel');
+  has(result, 2, 'n {', 'string.quoted.single.flywheel');
+  has(result, 2, 'n}', 'meta.embedded.expression.flywheel');
+  lacks(result, 3, 'b', 'meta.element');
+  assert.equal(result.stack.depth, 1);
+});
+
+test('markup uses HTML comments and never # comments', () => {
+  const result = tokenize([
+    'var a = <div>one <!-- note {x} --> two # not a comment</div>',
+    'var b = <ul>',
+    '    <!-- spans',
+    '        lines -->',
+    '    <li class="#{id}">{count # still code}</li>',
+    '    <li>{f({"k": [1, 2]}) # x}</li>',
+    '</ul>',
+    'print a # trailing',
+  ].join('\n'));
+  has(result, 0, 'note', 'comment.block.html.flywheel');
+  has(result, 0, '<!--', 'punctuation.definition.comment.begin.flywheel');
+  has(result, 0, '-->', 'punctuation.definition.comment.end.flywheel');
+  lacks(result, 0, 'x', 'meta.interpolation');
+  has(result, 0, 'two', 'string.unquoted.markup.flywheel');
+  has(result, 0, '# not', 'string.unquoted.markup.flywheel');
+  lacks(result, 0, '# not', 'comment');
+  has(result, 2, 'spans', 'comment.block.html.flywheel');
+  has(result, 3, 'lines', 'comment.block.html.flywheel');
+  lacks(result, 4, '#{', 'comment');
+  lacks(result, 4, '# still', 'comment');
+  has(result, 4, '}</li>', 'punctuation.section.interpolation.end.flywheel');
+  lacks(result, 5, '# x', 'comment');
+  has(result, 5, '}</li>', 'punctuation.section.interpolation.end.flywheel');
+  has(result, 6, 'ul', 'entity.name.tag.flywheel');
+  has(result, 7, '#', 'comment.line.number-sign.flywheel');
+  assert.equal(result.stack.depth, 1);
+});
+
+test('style contents highlight as CSS and script contents as JavaScript', () => {
+  const result = tokenize([
+    'element styles = <style>',
+    '    /* layout */',
+    '    body, .card > p:hover {{',
+    '        font-family: "Arial", sans-serif;',
+    '        background: #f0f0f0 !important;',
+    '        width: calc(100% - {gap}px);',
+    '    }}',
+    '    @media (max-width: 600px) {{ #main {{ margin: 0; }} }}',
+    '</style>',
+    'var js = <script>',
+    '    // note',
+    '    function greet(name) {{ return document.title + `hi` + {count}; }}',
+    '    const class_name = 0x1F;',
+    '</script>',
+    'print "done"',
+  ].join('\n'));
+  has(result, 1, 'layout', 'comment.block.css.flywheel');
+  has(result, 2, 'body', 'entity.name.tag.css.flywheel');
+  has(result, 2, 'card', 'entity.other.attribute-name.class.css.flywheel');
+  has(result, 2, 'hover', 'entity.other.attribute-name.pseudo-class.css.flywheel');
+  has(result, 2, '{{', 'punctuation.section.property-list.begin.css.flywheel');
+  has(result, 3, 'font-family', 'support.type.property-name.css.flywheel');
+  has(result, 3, 'Arial', 'string.quoted.double.css.flywheel');
+  has(result, 3, 'sans-serif', 'support.constant.property-value.css.flywheel');
+  has(result, 4, '#f0f0f0', 'constant.other.color.rgb-value.css.flywheel');
+  has(result, 4, '!important', 'keyword.other.important.css.flywheel');
+  has(result, 5, 'calc', 'support.function.css.flywheel');
+  has(result, 5, '100', 'constant.numeric.css.flywheel');
+  has(result, 5, 'gap', 'meta.embedded.expression.flywheel');
+  has(result, 5, 'px', 'keyword.other.unit.css.flywheel');
+  has(result, 7, '@media', 'keyword.control.at-rule.css.flywheel');
+  has(result, 7, 'max-width', 'support.type.property-name.css.flywheel');
+  has(result, 7, 'main', 'entity.other.attribute-name.id.css.flywheel');
+  has(result, 7, 'margin', 'support.type.property-name.css.flywheel');
+  has(result, 7, '600', 'meta.embedded.block.css.flywheel');
+  has(result, 8, 'style', 'entity.name.tag.flywheel');
+  has(result, 10, 'note', 'comment.line.double-slash.js.flywheel');
+  has(result, 11, 'function', 'storage.type.function.js.flywheel');
+  has(result, 11, 'greet', 'entity.name.function.js.flywheel');
+  has(result, 11, 'return', 'keyword.control.js.flywheel');
+  has(result, 11, 'title', 'variable.other.property.js.flywheel');
+  has(result, 11, 'hi', 'string.template.js.flywheel');
+  has(result, 11, 'count', 'meta.embedded.expression.flywheel');
+  has(result, 12, 'const', 'storage.type.js.flywheel');
+  has(result, 12, 'class_name', 'variable.other.readwrite.js.flywheel');
+  has(result, 12, '0x1F', 'constant.numeric.js.flywheel');
+  lacks(result, 14, 'print', 'meta.element');
+  assert.equal(result.stack.depth, 1);
+});
+
+test('style and script use CSS/JavaScript comments and never # comments', () => {
+  const result = tokenize([
+    'var s = <style>',
+    '    # not a comment',
+    '    p {{ color: red; # nope /* yes */ }}',
+    '</style>',
+    'var j = <script>',
+    '    # nope',
+    '    let a = 1; // yes # x',
+    '    /* block',
+    '       spans */ a = b / c; #priv',
+    '</script>',
+    'print s # trailing',
+  ].join('\n'));
+  lacks(result, 1, '# not', 'comment');
+  lacks(result, 1, 'comment', 'comment');
+  lacks(result, 2, '# nope', 'comment');
+  lacks(result, 2, 'nope', 'comment');
+  has(result, 2, 'yes', 'comment.block.css.flywheel');
+  has(result, 2, '}}', 'punctuation.section.property-list.end.css.flywheel');
+  lacks(result, 5, 'nope', 'comment');
+  has(result, 6, 'yes', 'comment.line.double-slash.js.flywheel');
+  has(result, 7, 'block', 'comment.block.js.flywheel');
+  has(result, 8, 'spans', 'comment.block.js.flywheel');
+  lacks(result, 8, 'priv', 'comment');
+  has(result, 10, '#', 'comment.line.number-sign.flywheel');
+  assert.equal(result.stack.depth, 1);
+});
+
+test('braces beside whitespace are literal, so JavaScript and CSS blocks keep their comments', () => {
+  const result = tokenize([
+    'var j = <script>',
+    '    function greet(name) {',
+    '        // inside',
+    '        if (name) { return {count}; } /* block */',
+    '    }',
+    '    // after',
+    '</script>',
+    'var s = <style>',
+    '    p { color: {c}; /* note */ }',
+    '</style>',
+    'print "{ name } {name}" # done',
+    'var t = <p>a { b } {c}</p>',
+  ].join('\n'));
+  has(result, 1, '{', 'punctuation.section.block.js.flywheel');
+  has(result, 2, 'inside', 'comment.line.double-slash.js.flywheel');
+  has(result, 3, 'count', 'meta.embedded.expression.flywheel');
+  has(result, 3, '} /*', 'punctuation.section.block.js.flywheel');
+  has(result, 3, 'block', 'comment.block.js.flywheel');
+  has(result, 4, '}', 'punctuation.section.block.js.flywheel');
+  has(result, 5, 'after', 'comment.line.double-slash.js.flywheel');
+  has(result, 8, '{', 'punctuation.section.property-list.begin.css.flywheel');
+  has(result, 8, 'c}', 'meta.embedded.expression.flywheel');
+  has(result, 8, 'note', 'comment.block.css.flywheel');
+  has(result, 8, '}', 'punctuation.section.property-list.end.css.flywheel', 1);
+  lacks(result, 10, ' name }', 'meta.interpolation');
+  has(result, 10, 'name}', 'meta.embedded.expression.flywheel');
+  has(result, 10, '#', 'comment.line.number-sign.flywheel');
+  lacks(result, 11, ' b ', 'meta.interpolation');
+  has(result, 11, 'c}', 'meta.embedded.expression.flywheel');
+  assert.equal(result.stack.depth, 1);
+});
+
 test('manifest links only existing extension resources and associates both suffixes', () => {
   const manifest = require('../package.json');
   assert.deepEqual(manifest.contributes.languages[0].extensions, ['.fw', '.fly']);

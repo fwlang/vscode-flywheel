@@ -2,7 +2,7 @@
   "name": "flywheel-language",
   "displayName": "Flywheel",
   "icon": "icon.png",
-  "description": "Syntax highlighting, snippets, and editing support for the Flywheel language.",
+  "description": "Syntax highlighting, snippets, and language server support (diagnostics, hover, navigation, rename, completion, formatting) for the Flywheel language.",
   "version": "0.1.0",
   "publisher": "fwlang",
   "private": true,
@@ -24,6 +24,10 @@
     "url": "https://github.com/fwlang/flywheel.git",
     "directory": "fw-vscode"
   },
+  "main": "./extension.js",
+  "activationEvents": [
+    "onLanguage:flywheel"
+  ],
   "contributes": {
     "languages": [
       {
@@ -49,7 +53,9 @@
         "scopeName": "source.flywheel",
         "path": "./syntaxes/flywheel.tmLanguage.json",
         "embeddedLanguages": {
-          "meta.embedded.expression.flywheel": "flywheel"
+          "meta.embedded.expression.flywheel": "flywheel",
+          "meta.embedded.block.css.flywheel": "css",
+          "meta.embedded.block.javascript.flywheel": "javascript"
         }
       }
     ],
@@ -58,7 +64,22 @@
         "language": "flywheel",
         "path": "./snippets/flywheel.json"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Flywheel",
+      "properties": {
+        "flywheel.path": {
+          "type": "string",
+          "default": "flywheel",
+          "description": "Path to the flywheel compiler, which provides the language server (`flywheel lsp`)."
+        },
+        "flywheel.languageServer.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Start the Flywheel language server for diagnostics, hover, go to definition, references, rename, completion, document symbols, and formatting."
+        }
+      }
+    }
   },
   "scripts": {
     "test": "node --test test/*.test.cjs",
