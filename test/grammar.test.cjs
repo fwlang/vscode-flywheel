@@ -149,6 +149,41 @@ test('nested elements, same-name tags, fragments, self-closing tags, and attribu
   assert.equal(result.stack.depth, 1);
 });
 
+test('void elements need no closing tag, inline, nested, or across lines', () => {
+  const result = tokenize([
+    'import html.*',
+    'var page = <div><img src="a.png" alt=logo><br><span>After</span></div>',
+    'var field = <input type="text" disabled>',
+    'var tall = <form>',
+    '  <img',
+    '    src={url}',
+    '  >',
+    '  <p>Below<hr></p>',
+    '</form>',
+    'var image =',
+    '<meta',
+    '  charset="utf-8">',
+    'var brand = <brand>Not void</brand>',
+    'print page',
+  ].join('\n'));
+  has(result, 1, 'img', 'entity.name.tag.flywheel');
+  has(result, 1, 'logo', 'string.unquoted.attribute-value.flywheel');
+  has(result, 1, 'br', 'entity.name.tag.flywheel');
+  has(result, 1, 'After', 'string.unquoted.markup.flywheel');
+  has(result, 2, 'disabled', 'entity.other.attribute-name.flywheel');
+  lacks(result, 3, 'var', 'meta.element');
+  has(result, 5, 'url', 'meta.embedded.expression.flywheel');
+  has(result, 7, 'Below', 'string.unquoted.markup.flywheel');
+  has(result, 7, 'hr', 'entity.name.tag.flywheel');
+  lacks(result, 9, 'var', 'meta.element');
+  has(result, 11, 'charset', 'entity.other.attribute-name.flywheel');
+  has(result, 12, 'brand', 'entity.name.tag.flywheel', 1);
+  has(result, 12, 'Not void', 'string.unquoted.markup.flywheel');
+  has(result, 13, 'print', 'support.function.builtin.flywheel');
+  lacks(result, 13, 'page', 'meta.element');
+  assert.equal(result.stack.depth, 1);
+});
+
 test('interpolation balances maps and nested strings and treats doubled braces literally', () => {
   const result = tokenize([
     'print "{{literal}} {string({"values": [1, 2]})} {input("Prompt: ")} \\u{26} \\""',

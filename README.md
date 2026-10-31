@@ -41,7 +41,7 @@ Node.js 22 or later is needed only to run the development and packaging tools. T
 - Declarations, visibility modifiers, imports, control flow, built-in functions (including `input`), types, and typed errors.
 - Strings with escapes, doubled literal braces, and nested expression interpolation.
 - Numbers, inclusive/exclusive ranges, arithmetic, comparisons, and logical operators. `#` is a comment; `//` is integer division.
-- Nested markup, fragments, self-closing tags, component/module tag names, attributes (double-, single-quoted, unquoted, `{expression}`, and valueless), entities, and embedded expressions. HTML comments (`<!-- -->`) are highlighted; `#` is never a comment inside markup, including its `{expression}`s. Attribute names such as `class` are not keywords.
+- Nested markup, fragments, self-closing tags, HTML void elements (`<img>`, `<br>`, `<input>`, ... without `/>` or a closing tag), component/module tag names, attributes (double-, single-quoted, unquoted, `{expression}`, and valueless), entities, and embedded expressions. HTML comments (`<!-- -->`) are highlighted; `#` is never a comment inside markup, including its `{expression}`s. Attribute names such as `class` are not keywords.
 - CSS inside `<style>` (selectors, rule blocks, properties, values, units, colors, functions, at-rules, comments) and JavaScript inside `<script>` (keywords, strings, template literals, numbers, comments, calls, properties, operators). Both stay markup text: as in the compiler, a `{` followed by whitespace, a `}` beside whitespace, and `{{`/`}}` are literal braces, while `{expression}` still interpolates. `#` is not a comment there. Comment toggling in these regions uses CSS/JavaScript comments.
 - Nested generic types such as `map<string, tuple<element?>>`, without treating the type arguments as markup.
 
@@ -58,6 +58,6 @@ npm test
 npm run package
 ```
 
-Tests check the language server message framing and run the actual TextMate grammar through VS Code's Oniguruma tokenizer, covering nested markup/interpolation, self-closing nodes, generic/comparison boundaries, ranges, comments, and editor configuration. The packaging command creates `flywheel-language.vsix` in this directory.
+Tests check the language server message framing and run the actual TextMate grammar through VS Code's Oniguruma tokenizer, covering nested markup/interpolation, self-closing and void nodes, generic/comparison boundaries, ranges, comments, and editor configuration. The packaging command creates `flywheel-language.vsix` in this directory.
 
 TextMate highlighting is lexical, not a semantic parser. Custom parentheses-free calls and nominal types cannot always be distinguished from variable references. For an opening tag whose attributes begin on the next line, the grammar recognizes expression-start positions, standalone markup, `return`, and `print`; ambiguous incomplete expressions may need the remainder of the tag before highlighting settles. Automatic closing-tag insertion is not supplied by this extension.
