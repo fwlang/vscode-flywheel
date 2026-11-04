@@ -69,6 +69,39 @@
     ],
     "description": "Handle a typed error"
   },
+  "Try / catch by name / then": {
+    "prefix": "trythen",
+    "body": [
+      "try",
+      "    $1",
+      "catch \"${2:ValueError}\" ${3:error}",
+      "    $4",
+      "then",
+      "    $0",
+      "end"
+    ],
+    "description": "Catch an error by name; `then` runs on every exit (like finally)"
+  },
+  "Throw named error": {
+    "prefix": "throw",
+    "body": ["throw \"${1:MyError}\" \"${2:message}\""],
+    "description": "Raise an error named by a string"
+  },
+  "Assert": {
+    "prefix": "assert",
+    "body": ["assert ${1:condition} \"${2:message}\""],
+    "description": "Raise AssertionError with the message when the condition is false"
+  },
+  "JSON literal": {
+    "prefix": "json",
+    "body": ["<json>$0</json>"],
+    "description": "A json.value written as raw JSON"
+  },
+  "Native import": {
+    "prefix": "importnative",
+    "body": ["import ${1|cxx,c,rust,zig|} ${2:module}"],
+    "description": "Import functions from a C, C++, Rust, or Zig source file"
+  },
   "Class": {
     "prefix": "class",
     "body": [

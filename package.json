@@ -3,7 +3,7 @@
   "displayName": "Flywheel",
   "icon": "icon.png",
   "description": "Syntax highlighting, snippets, and language server support (diagnostics, hover, navigation, rename, completion, formatting) for the Flywheel language.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publisher": "fwlang",
   "private": true,
   "license": "UNLICENSED",
@@ -55,7 +55,8 @@
         "embeddedLanguages": {
           "meta.embedded.expression.flywheel": "flywheel",
           "meta.embedded.block.css.flywheel": "css",
-          "meta.embedded.block.javascript.flywheel": "javascript"
+          "meta.embedded.block.javascript.flywheel": "javascript",
+          "meta.embedded.block.json.flywheel": "json"
         }
       }
     ],

@@ -26,6 +26,9 @@
           "include": "#generic-types"
         },
         {
+          "include": "#adjacent-type-arguments"
+        },
+        {
           "include": "#keywords"
         },
         {
@@ -338,14 +341,12 @@
     },
     "imports": {
       "name": "meta.import.flywheel",
-      "begin": "\\bimport\\b",
-      "beginCaptures": {
-        "0": {
-          "name": "keyword.control.import.flywheel"
-        }
-      },
+      "begin": "\\b(import)(?:(\\+\\+)|\\s+(c|cxx|rust|zig)\\b(?=\\s+[A-Za-z_\"]))?",
       "end": "(?=;|#|$)",
       "patterns": [
+        {
+          "include": "#strings"
+        },
         {
           "match": "\\bas\\b",
           "name": "keyword.control.import.flywheel"
@@ -362,7 +363,18 @@
           "match": "[A-Za-z_][A-Za-z0-9_]*",
           "name": "entity.name.namespace.flywheel"
         }
-      ]
+      ],
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.import.flywheel"
+        },
+        "2": {
+          "name": "keyword.control.import.flywheel"
+        },
+        "3": {
+          "name": "storage.modifier.language.flywheel"
+        }
+      }
     },
     "generic-types": {
       "name": "meta.type.parameters.flywheel",
@@ -402,13 +414,13 @@
       ]
     },
     "types": {
-      "match": "\\b(?:bool|i8|i16|i32|i64|u8|u16|u32|u64|int|float|double|string|void|element|fragment|char|array|tuple|map|Result|weak|Error|RuntimeError|FileError|InputError|ProcessError|IndexError|KeyError|NumericError|AssertionError|JsonError|ResultError|CastError|SelectorError)\\b",
+      "match": "\\b(?:bool|i8|i16|i32|i64|u8|u16|u32|u64|int|float|double|string|void|element|fragment|char|array|tuple|map|Result|weak|Error|RuntimeError|FileError|InputError|ProcessError|IndexError|KeyError|NumericError|AssertionError|JsonError|ResultError|CastError|SelectorError|DesktopError|RegexError|NetworkError|ValueError|HttpError|DatabaseError|NativeError)\\b",
       "name": "support.type.flywheel"
     },
     "keywords": {
       "patterns": [
         {
-          "match": "\\b(?:if|then|else|while|do|for|in|end|break|continue|return|try|catch|finally|throw)\\b",
+          "match": "\\b(?:if|then|else|while|do|for|in|end|break|continue|return|try|catch|finally|throw|assert)\\b",
           "name": "keyword.control.flywheel"
         },
         {
@@ -513,6 +525,9 @@
     },
     "markup": {
       "patterns": [
+        {
+          "include": "#json-element"
+        },
         {
           "include": "#fragment"
         },
@@ -1527,6 +1542,94 @@
           "name": "variable.other.readwrite.js.flywheel"
         }
       ]
+    },
+    "json-element": {
+      "name": "meta.element.json.flywheel",
+      "begin": "(<)(json)(>)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.begin.flywheel"
+        },
+        "2": {
+          "name": "entity.name.tag.flywheel"
+        },
+        "3": {
+          "name": "punctuation.definition.tag.end.flywheel"
+        }
+      },
+      "end": "(</)(json)(>)",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.tag.begin.flywheel"
+        },
+        "2": {
+          "name": "entity.name.tag.flywheel"
+        },
+        "3": {
+          "name": "punctuation.definition.tag.end.flywheel"
+        }
+      },
+      "contentName": "meta.embedded.block.json.flywheel",
+      "patterns": [
+        {
+          "include": "#json-value"
+        }
+      ]
+    },
+    "json-value": {
+      "patterns": [
+        {
+          "match": "(\"(?:[^\"\\\\]|\\\\.)*\")\\s*(?=:)",
+          "captures": {
+            "1": {
+              "name": "support.type.property-name.json.flywheel"
+            }
+          }
+        },
+        {
+          "name": "string.quoted.double.json.flywheel",
+          "match": "\"(?:[^\"\\\\]|\\\\.)*\""
+        },
+        {
+          "name": "constant.numeric.json.flywheel",
+          "match": "-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?"
+        },
+        {
+          "name": "constant.language.json.flywheel",
+          "match": "\\b(?:true|false|null)\\b"
+        },
+        {
+          "name": "punctuation.separator.json.flywheel",
+          "match": "[,:]"
+        },
+        {
+          "name": "punctuation.section.json.flywheel",
+          "match": "[{}\\[\\]]"
+        }
+      ]
+    },
+    "adjacent-type-arguments": {
+      "comment": "`<` directly after an identifier opens type arguments, never markup (thread.task<int>, json.decode<User>).",
+      "match": "(?<=[A-Za-z0-9_])(<)([A-Za-z_][A-Za-z0-9_.]*(?:\\[\\])*\\??(?:\\s*,\\s*[A-Za-z_][A-Za-z0-9_.]*(?:\\[\\])*\\??)*)(>)",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.typeparameters.begin.flywheel"
+        },
+        "2": {
+          "patterns": [
+            {
+              "include": "#types"
+            },
+            {
+              "match": "[A-Za-z_][A-Za-z0-9_]*",
+              "name": "entity.name.type.flywheel"
+            }
+          ]
+        },
+        "3": {
+          "name": "punctuation.definition.typeparameters.end.flywheel"
+        }
+      }
     }
   }
 }

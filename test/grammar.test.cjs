@@ -87,6 +87,51 @@ test('declarations, imports, built-ins, calls, and errors', () => {
   assert.equal(result.stack.depth, 1);
 });
 
+test('native and string imports, named errors, assert, then, and <json> literals', () => {
+  const result = tokenize([
+    'import++ vec',
+    'import cxx "lib/text.cpp" as text',
+    'import rust fast',
+    'import "https://example.com/util.fw" as util',
+    'import c',
+    'try',
+    '    assert n > 0 "positive"',
+    '    throw "MyError" "message"',
+    'catch "MyError" e',
+    '    print e.name',
+    'then',
+    '    print "done"',
+    'end',
+    'var doc = <json>{"name": "Ann", "tags": [1, 2.5e3], "ok": true, "none": null}</json>',
+    'var ch = thread.channel<string>()',
+    'print doc',
+  ].join('\n'));
+  has(result, 0, 'import', 'keyword.control.import.flywheel');
+  has(result, 0, '++', 'keyword.control.import.flywheel');
+  has(result, 0, 'vec', 'entity.name.namespace.flywheel');
+  has(result, 1, 'cxx', 'storage.modifier.language.flywheel');
+  has(result, 1, '"lib/text.cpp"', 'string.quoted.double.flywheel');
+  has(result, 1, 'text', 'entity.name.namespace.flywheel', 1);
+  has(result, 2, 'rust', 'storage.modifier.language.flywheel');
+  has(result, 3, 'https', 'string.quoted.double.flywheel');
+  has(result, 4, 'c', 'entity.name.namespace.flywheel');
+  has(result, 6, 'assert', 'keyword.control.flywheel');
+  has(result, 7, 'throw', 'keyword.control.flywheel');
+  has(result, 8, '"MyError"', 'string.quoted.double.flywheel');
+  has(result, 10, 'then', 'keyword.control.flywheel');
+  has(result, 13, 'json', 'entity.name.tag.flywheel');
+  has(result, 13, '"name"', 'support.type.property-name.json.flywheel');
+  has(result, 13, '"Ann"', 'string.quoted.double.json.flywheel');
+  has(result, 13, '2.5e3', 'constant.numeric.json.flywheel');
+  has(result, 13, 'true', 'constant.language.json.flywheel');
+  has(result, 13, 'null', 'constant.language.json.flywheel');
+  has(result, 13, '"Ann"', 'meta.embedded.block.json.flywheel');
+  has(result, 14, 'string', 'support.type.flywheel');
+  lacks(result, 14, 'string', 'meta.element');
+  has(result, 15, 'print', 'support.function.builtin.flywheel');
+  assert.equal(result.stack.depth, 1);
+});
+
 test('ranges, arithmetic, literals, comparisons, and generic types remain code', () => {
   const result = tokenize([
     'var numbers = 1..3',

@@ -38,16 +38,17 @@ Node.js 22 or later is needed only to run the development and packaging tools. T
 
 ## Highlighting
 
-- Declarations, visibility modifiers, imports, control flow, built-in functions (including `input`), types, and typed errors.
+- Declarations, visibility modifiers, imports (including string, path, and URL imports, `import++`, and `import c`/`cxx`/`rust`/`zig` native imports), control flow (`try`/`catch`/`then`, `throw`, `assert`), built-in functions (including `input`), types, and typed errors.
 - Strings with escapes, doubled literal braces, and nested expression interpolation.
 - Numbers, inclusive/exclusive ranges, arithmetic, comparisons, and logical operators. `#` is a comment; `//` is integer division.
 - Nested markup, fragments, self-closing tags, HTML void elements (`<img>`, `<br>`, `<input>`, ... without `/>` or a closing tag), component/module tag names, attributes (double-, single-quoted, unquoted, `{expression}`, and valueless), entities, and embedded expressions. HTML comments (`<!-- -->`) are highlighted; `#` is never a comment inside markup, including its `{expression}`s. Attribute names such as `class` are not keywords.
 - CSS inside `<style>` (selectors, rule blocks, properties, values, units, colors, functions, at-rules, comments) and JavaScript inside `<script>` (keywords, strings, template literals, numbers, comments, calls, properties, operators). Both stay markup text: as in the compiler, a `{` followed by whitespace, a `}` beside whitespace, and `{{`/`}}` are literal braces, while `{expression}` still interpolates. `#` is not a comment there. Comment toggling in these regions uses CSS/JavaScript comments.
-- Nested generic types such as `map<string, tuple<element?>>`, without treating the type arguments as markup.
+- Nested generic types such as `map<string, tuple<element?>>`, and type arguments written directly after a name (`thread.task<int>`, `json.decode<User>`), without treating them as markup.
+- JSON inside `<json>...</json>` literals (keys, strings, numbers, `true`/`false`/`null`).
 
 The language configuration supplies comment toggling, bracket/quote pairing, block indentation, and `# region` / `# endregion` folding markers. Angle brackets are intentionally not paired automatically because they also represent comparisons and generic arguments.
 
-Snippets include `fn`, `fn0`, `if`, `ifelse`, `for`, `while`, `try`, `class`, `component`, and `fragment`. `fn0` uses Flywheel's parentheses-free zero-argument declaration syntax.
+Snippets include `fn`, `fn0`, `if`, `ifelse`, `for`, `while`, `try`, `trythen`, `throw`, `assert`, `json`, `importnative`, `class`, `component`, and `fragment`. `fn0` uses Flywheel's parentheses-free zero-argument declaration syntax.
 
 ## Development
 
