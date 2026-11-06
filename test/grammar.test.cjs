@@ -479,3 +479,13 @@ test('all repository examples tokenize without leaking a string or markup contex
     assert.equal(result.stack.depth, 1, `Unclosed highlighting context in ${filename}`);
   }
 });
+
+test('which filters highlight as an operator keyword', () => {
+  const result = tokenize([
+    'var adults = people which .age >= 18',
+    'print numbers which > 10',
+  ].join('\n'));
+  has(result, 0, 'which', 'keyword.operator.logical.flywheel');
+  has(result, 0, '>=', 'keyword.operator.comparison.flywheel');
+  has(result, 1, 'which', 'keyword.operator.logical.flywheel');
+});
