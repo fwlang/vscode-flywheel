@@ -451,7 +451,7 @@ test('editor configuration uses Flywheel comments and word-oriented block indent
   const decrease = new RegExp(config.indentationRules.decreaseIndentPattern);
   for (const line of ['function main returns void', 'private function f(int n) returns int',
     'class Person', 'if ready then', 'else if other then', 'else', 'for x in 1..3 do',
-    'while true do', 'try', 'catch ProcessError error', 'finally']) {
+    'while true do', 'when winning do', 'try', 'catch ProcessError error', 'finally']) {
     assert.ok(increase.test(line), `Should indent after: ${line}`);
   }
   for (const line of ['print "then"', '# if true then', 'var x = 3', 'end']) {
@@ -488,4 +488,90 @@ test('which filters highlight as an operator keyword', () => {
   has(result, 0, 'which', 'keyword.operator.logical.flywheel');
   has(result, 0, '>=', 'keyword.operator.comparison.flywheel');
   has(result, 1, 'which', 'keyword.operator.logical.flywheel');
+});
+
+test('error types and throw with highlight their names and message keyword', () => {
+  const result = tokenize([
+    'error BadInput',
+    'public error HttpFailure(int status)',
+    'throw HttpFailure(503) with "upstream down"',
+    'throw "EmptyKey" with "no key" # with in a comment',
+    'catch Error error',
+    'var with = 3',
+  ].join('\n'));
+  has(result, 0, 'error', 'storage.type.error.flywheel');
+  has(result, 0, 'BadInput', 'entity.name.type.error.flywheel');
+  has(result, 1, 'public', 'storage.modifier.flywheel');
+  has(result, 1, 'error', 'storage.type.error.flywheel');
+  has(result, 1, 'HttpFailure', 'entity.name.type.error.flywheel');
+  has(result, 2, 'throw', 'keyword.control.flywheel');
+  has(result, 2, 'with', 'keyword.control.flywheel');
+  has(result, 2, '"upstream down"', 'string.quoted.double.flywheel');
+  has(result, 3, 'with', 'keyword.control.flywheel');
+  has(result, 3, 'with', 'comment.line.number-sign.flywheel', 1);
+  lacks(result, 4, 'error', 'storage.type.error');
+  lacks(result, 5, 'with', 'keyword.control');
+});
+
+test('reactive, computed, when, and negated aliases', () => {
+  const result = tokenize([
+    'reactive int score = 0',
+    'computed bool winning = score >= 10',
+    'when winning do',
+    '    print "winning with {score}"',
+    'end',
+    'reactive bool playerAlive/playerDead = true',
+    'var half = total / 2',
+    'var when = reactive',
+  ].join('\n'));
+  has(result, 0, 'reactive', 'storage.modifier.reactive.flywheel');
+  has(result, 0, 'int', 'support.type.flywheel');
+  has(result, 1, 'computed', 'storage.modifier.reactive.flywheel');
+  has(result, 2, 'when', 'keyword.control.flywheel');
+  has(result, 2, 'do', 'keyword.control.flywheel');
+  has(result, 5, 'reactive', 'storage.modifier.reactive.flywheel');
+  has(result, 5, 'bool', 'support.type.flywheel');
+  has(result, 5, '/', 'punctuation.separator.alias.flywheel');
+  has(result, 5, 'playerDead', 'variable.other.readwrite.alias.flywheel');
+  has(result, 6, '/', 'keyword.operator.arithmetic.flywheel');
+  lacks(result, 7, 'when', 'keyword');
+  lacks(result, 7, 'reactive', 'storage');
+});
+
+test('unit declarations, quantity types, quantity literals, and conversions', () => {
+  const result = tokenize([
+    'unitns time for int, float',
+    'unit time.ms = 1/1000',
+    'unitconv 1metric_length.m / 1time.s = 1metric_speed.mps',
+    'int[metric_length] length = 100m',
+    'float[time] t = 0.32km + 15time.s + 5eV',
+    'var big = 1e5 + 2E-3 + 1e5km',
+    'print type(t), unit(t), unitns(t), distance in cm',
+    'int[] plain = [1, 2]',
+  ].join('\n'));
+  has(result, 0, 'unitns', 'storage.type.unit.flywheel');
+  has(result, 0, 'time', 'entity.name.namespace.unit.flywheel');
+  has(result, 0, 'for', 'keyword.control.flywheel');
+  has(result, 1, 'unit', 'storage.type.unit.flywheel');
+  has(result, 1, 'time', 'entity.name.namespace.unit.flywheel');
+  has(result, 1, 'ms', 'entity.name.unit.flywheel');
+  has(result, 1, '1000', 'constant.numeric.flywheel');
+  has(result, 2, 'unitconv', 'storage.type.unit.flywheel');
+  has(result, 2, 'metric_length', 'entity.name.namespace.unit.flywheel');
+  has(result, 2, 'mps', 'keyword.other.unit.flywheel');
+  has(result, 3, 'metric_length', 'entity.name.namespace.unit.flywheel');
+  has(result, 3, '100', 'constant.numeric.flywheel');
+  has(result, 3, 'm', 'keyword.other.unit.flywheel', 1);
+  has(result, 4, '0.32', 'constant.numeric.flywheel');
+  has(result, 4, 'km', 'keyword.other.unit.flywheel');
+  has(result, 4, 'time', 'entity.name.namespace.unit.flywheel', 1);
+  has(result, 4, 'eV', 'keyword.other.unit.flywheel');
+  has(result, 5, '1e5', 'constant.numeric.flywheel');
+  has(result, 5, '2E-3', 'constant.numeric.flywheel');
+  has(result, 5, 'km', 'keyword.other.unit.flywheel');
+  has(result, 6, 'type', 'support.function.builtin.flywheel');
+  has(result, 6, 'unit', 'support.function.builtin.flywheel');
+  has(result, 6, 'unitns', 'support.function.builtin.flywheel');
+  has(result, 6, 'in', 'keyword.control.flywheel', 1);
+  lacks(result, 7, 'int', 'entity');
 });

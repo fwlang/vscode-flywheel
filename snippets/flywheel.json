@@ -58,6 +58,36 @@
     ],
     "description": "While loop"
   },
+  "When": {
+    "prefix": "when",
+    "body": [
+      "when ${1:condition} do",
+      "    $0",
+      "end"
+    ],
+    "description": "Run the body each time a reactive condition becomes true"
+  },
+  "Reactive": {
+    "prefix": "reactive",
+    "body": [
+      "reactive ${1:int} ${2:name} = ${3:0}"
+    ],
+    "description": "Declare a reactive variable"
+  },
+  "Computed": {
+    "prefix": "computed",
+    "body": [
+      "computed ${1:bool} ${2:name} = ${3:expression}"
+    ],
+    "description": "Declare a value computed from reactive variables"
+  },
+  "Negated alias": {
+    "prefix": "boolalias",
+    "body": [
+      "bool ${1:enabled}/${2:disabled} = ${3:true}"
+    ],
+    "description": "Declare a bool with a negated alias"
+  },
   "Try / catch": {
     "prefix": "try",
     "body": [
@@ -84,22 +114,44 @@
   },
   "Throw named error": {
     "prefix": "throw",
-    "body": ["throw \"${1:MyError}\" \"${2:message}\""],
+    "body": [
+      "throw \"${1:MyError}\" with \"${2:message}\""
+    ],
     "description": "Raise an error named by a string"
+  },
+  "Error type": {
+    "prefix": "error",
+    "body": [
+      "error ${1:HttpFailure}(${2:int} ${3:status})"
+    ],
+    "description": "Declare an error type with fields and a message"
+  },
+  "Throw error type": {
+    "prefix": "throwwith",
+    "body": [
+      "throw ${1:HttpFailure}(${2:503}) with \"${3:message}\""
+    ],
+    "description": "Throw a declared error type with a message"
   },
   "Assert": {
     "prefix": "assert",
-    "body": ["assert ${1:condition} \"${2:message}\""],
+    "body": [
+      "assert ${1:condition} \"${2:message}\""
+    ],
     "description": "Raise AssertionError with the message when the condition is false"
   },
   "JSON literal": {
     "prefix": "json",
-    "body": ["<json>$0</json>"],
+    "body": [
+      "<json>$0</json>"
+    ],
     "description": "A json.value written as raw JSON"
   },
   "Native import": {
     "prefix": "importnative",
-    "body": ["import ${1|cxx,c,rust,zig|} ${2:module}"],
+    "body": [
+      "import ${1|cxx,c,rust,zig|} ${2:module}"
+    ],
     "description": "Import functions from a C, C++, Rust, or Zig source file"
   },
   "Class": {
@@ -130,5 +182,14 @@
       "</>"
     ],
     "description": "A fragment of markup nodes"
+  },
+  "Unit namespace": {
+    "prefix": "unitns",
+    "body": [
+      "unitns ${1:time} for ${2:int, float}",
+      "unit ${1}.${3:s} = 1",
+      "unit ${1}.${4:min} = ${5:60}$0"
+    ],
+    "description": "Declare a unit namespace and its units"
   }
 }
