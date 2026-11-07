@@ -3,7 +3,7 @@
   "displayName": "Flywheel",
   "icon": "icon.png",
   "description": "Syntax highlighting, snippets, and language server support (diagnostics, hover, navigation, rename, completion, formatting) for the Flywheel language.",
-  "version": "0.2.0",
+  "version": "2.8.0",
   "publisher": "fwlang",
   "private": true,
   "license": "UNLICENSED",

@@ -186,9 +186,9 @@
   "Unit namespace": {
     "prefix": "unitns",
     "body": [
-      "unitns ${1:time} for ${2:int, float}",
-      "unit ${1}.${3:s} = 1",
-      "unit ${1}.${4:min} = ${5:60}$0"
+      "unitns ${1:time}",
+      "unit ${1}.${2:s} = 1",
+      "unit ${1}.${3:min} = ${4:60}$0"
     ],
     "description": "Declare a unit namespace and its units"
   }

@@ -540,7 +540,7 @@ test('reactive, computed, when, and negated aliases', () => {
 
 test('unit declarations, quantity types, quantity literals, and conversions', () => {
   const result = tokenize([
-    'unitns time for int, float',
+    'unitns time',
     'unit time.ms = 1/1000',
     'unitconv 1metric_length.m / 1time.s = 1metric_speed.mps',
     'int[metric_length] length = 100m',
@@ -551,7 +551,6 @@ test('unit declarations, quantity types, quantity literals, and conversions', ()
   ].join('\n'));
   has(result, 0, 'unitns', 'storage.type.unit.flywheel');
   has(result, 0, 'time', 'entity.name.namespace.unit.flywheel');
-  has(result, 0, 'for', 'keyword.control.flywheel');
   has(result, 1, 'unit', 'storage.type.unit.flywheel');
   has(result, 1, 'time', 'entity.name.namespace.unit.flywheel');
   has(result, 1, 'ms', 'entity.name.unit.flywheel');
@@ -574,4 +573,20 @@ test('unit declarations, quantity types, quantity literals, and conversions', ()
   has(result, 6, 'unitns', 'support.function.builtin.flywheel');
   has(result, 6, 'in', 'keyword.control.flywheel', 1);
   lacks(result, 7, 'int', 'entity');
+});
+
+test('quantity types take any numeric type and a module-qualified namespace', () => {
+  const result = tokenize([
+    'i32[time] small = 90s',
+    'u8[weight] w = 3kg',
+    'float[metric.length] trip = 12.5km',
+    'import metric',
+  ].join('\n'));
+  has(result, 0, 'i32', 'support.type.flywheel');
+  has(result, 0, 'time', 'entity.name.namespace.unit.flywheel');
+  has(result, 1, 'u8', 'support.type.flywheel');
+  has(result, 1, 'weight', 'entity.name.namespace.unit.flywheel');
+  has(result, 2, 'metric', 'entity.name.namespace.flywheel');
+  has(result, 2, 'length', 'entity.name.namespace.unit.flywheel');
+  has(result, 2, 'km', 'keyword.other.unit.flywheel');
 });

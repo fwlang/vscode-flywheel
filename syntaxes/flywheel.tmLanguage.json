@@ -1715,17 +1715,14 @@
     "unit-declarations": {
       "patterns": [
         {
-          "comment": "unitns time for int, float",
-          "match": "^\\s*(unitns)\\s+([A-Za-z_][A-Za-z0-9_]*)\\s+(for)\\b",
+          "comment": "unitns time: a unit namespace; its units apply to every numeric type.",
+          "match": "^\\s*(unitns)\\s+([A-Za-z_][A-Za-z0-9_]*)\\b",
           "captures": {
             "1": {
               "name": "storage.type.unit.flywheel"
             },
             "2": {
               "name": "entity.name.namespace.unit.flywheel"
-            },
-            "3": {
-              "name": "keyword.control.flywheel"
             }
           }
         },
@@ -1759,8 +1756,8 @@
       ]
     },
     "unit-types": {
-      "comment": "int[time], float[metric_length]: quantity types of a unit namespace.",
-      "match": "\\b(int|float|double)(\\[)\\s*([A-Za-z_][A-Za-z0-9_]*)\\s*(\\])",
+      "comment": "int[time], u8[time], float[metric.length]: quantity types of a unit namespace (any numeric type).",
+      "match": "\\b(int|float|double|[iu](?:8|16|32|64))(\\[)\\s*(?:([A-Za-z_][A-Za-z0-9_]*)(\\.))?([A-Za-z_][A-Za-z0-9_]*)\\s*(\\])",
       "captures": {
         "1": {
           "name": "support.type.flywheel"
@@ -1769,16 +1766,22 @@
           "name": "punctuation.definition.typeparameters.begin.flywheel"
         },
         "3": {
-          "name": "entity.name.namespace.unit.flywheel"
+          "name": "entity.name.namespace.flywheel"
         },
         "4": {
+          "name": "punctuation.accessor.flywheel"
+        },
+        "5": {
+          "name": "entity.name.namespace.unit.flywheel"
+        },
+        "6": {
           "name": "punctuation.definition.typeparameters.end.flywheel"
         }
       }
     },
     "quantities": {
       "comment": "A number directly followed by a unit is a quantity: 100m, 0.32km, 15time.s, 5eV (an exponent needs digits).",
-      "match": "(?<![\\w.])((?>[0-9]+(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?))(?!(?:and|or|not|in|is|as|then|do|else|end|which|with|returns|if|for|while|true|false|null)\\b)(?:([A-Za-z_][A-Za-z0-9_]*)(\\.))?([A-Za-z_][A-Za-z0-9_]*)",
+      "match": "(?<![\\w.])([0-9]+(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)(?![0-9]|[eE][+-]?[0-9])(?!(?:and|or|not|in|is|as|then|do|else|end|which|with|returns|if|for|while|true|false|null)\\b)(?:([A-Za-z_][A-Za-z0-9_]*)(\\.))?([A-Za-z_][A-Za-z0-9_]*)",
       "captures": {
         "1": {
           "name": "constant.numeric.flywheel"
